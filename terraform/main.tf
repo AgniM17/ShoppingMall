@@ -19,7 +19,6 @@ resource "google_artifact_registry_repository" "docker_repo" {
   format        = "DOCKER"
 
   lifecycle {
-    # Don't try to recreate if it already exists
     prevent_destroy = true
   }
 }
@@ -51,7 +50,7 @@ resource "google_cloud_run_service" "app" {
       service_account_name = google_service_account.cloudrun_sa.email
 
       containers {
-        image = "us-docker.pkg.dev/${var.project_id}/aspnet-repo/app:latest"
+        image = var.image  # <-- use dynamic image from pipeline
         ports {
           container_port = 8080
         }
