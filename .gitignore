@@ -1,0 +1,69 @@
+# macOS system file
+.DS_Store
+
+# Build results
+bin/
+obj/
+
+# Visual Studio files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ASP.NET temporary files
+App_Data/
+App_Browsers/
+App_Code/
+App_GlobalResources/
+App_LocalResources/
+App_WebReferences/
+
+# Visual Studio cache files
+.vs/
+
+# Publish related files
+*.Publish.xml
+*.azurePubxml
+*.pubxml
+*.publishproj
+
+# Resharper files
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# NuGet packages folder
+packages/
+
+# Others
+*.cache
+*.ilk
+*.pdb
+*.log
+*.vspscc
+*.vssscc
+
+# IIS Express
+/.vs/
+/iisexpress/
+
+# Rider
+.idea/
+
+# User-specific files
+*.dbmdl
+*.bak
+*.backup
+*.mdf
+*.ldf
+
+# Test Results
+TestResults/
+*.trx
+
+# Web.config files with secrets (if any)
+*.config.user
+
+# Node modules (if using npm/yarn in your project)
+node_modules/
