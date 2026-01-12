@@ -83,6 +83,9 @@ jobs:
         working-directory: terraform
         run: terraform init
 
+      - name: Debug TF_VAR_image
+        run: echo "TF_VAR_image=${{ needs.build-and-push.outputs.image_tag }}"
+
       - name: Terraform Apply
         working-directory: terraform
         env:
