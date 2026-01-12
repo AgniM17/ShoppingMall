@@ -80,10 +80,10 @@ jobs:
 
       - name: Terraform Apply
         working-directory: terraform
-        run: terraform apply \
-              -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
-              -var="region=${{ secrets.GCP_REGION }}" \
-              -var="image=${{ env.IMAGE_TAG }}" \
-              -auto-approve
-        env:
-          IMAGE_TAG: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app:${GITHUB_SHA}
+        run: |
+          terraform apply \
+            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -var="region=${{ secrets.GCP_REGION }}" \
+            -var="image=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app:${GITHUB_SHA}" \
+            -auto-approve
+
