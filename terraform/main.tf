@@ -17,12 +17,21 @@ resource "google_artifact_registry_repository" "docker_repo" {
   location      = var.region
   repository_id = "aspnet-repo"
   format        = "DOCKER"
+
+  lifecycle {
+    # Don't try to recreate if it already exists
+    prevent_destroy = true
+  }
 }
 
 # Cloud Run Service Account
 resource "google_service_account" "cloudrun_sa" {
   account_id   = "cloudrun-sa"
   display_name = "Cloud Run Service Account"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Allow Cloud Run to pull images
