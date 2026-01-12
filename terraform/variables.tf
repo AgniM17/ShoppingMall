@@ -11,4 +11,5 @@ variable "region" {
 variable "image" {
   type        = string
   description = "Docker image for Cloud Run service"
+  default = ""
 }
