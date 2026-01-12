@@ -27,6 +27,7 @@ resource "google_service_account" "cloudrun_sa" {
 
 # Allow Cloud Run to pull images
 resource "google_project_iam_member" "artifact_access" {
+  project = var.project_id
   role   = "roles/artifactregistry.reader"
   member = "serviceAccount:${google_service_account.cloudrun_sa.email}"
 }
@@ -49,7 +50,7 @@ resource "google_cloud_run_service" "app" {
     }
   }
 
-  traffics {
+  traffic {
     percent         = 100
     latest_revision = true
   }
