@@ -67,3 +67,6 @@ TestResults/
 
 # Node modules (if using npm/yarn in your project)
 node_modules/
+
+# terraform files
+.terraform
