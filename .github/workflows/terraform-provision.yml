@@ -49,9 +49,11 @@ jobs:
         run: gcloud auth configure-docker us-docker.pkg.dev --quiet
 
       - name: Build Docker image
-        run: docker build \
-              --cache-from=us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app:latest \
-              -t us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app:latest .
+        run: |
+          docker build \
+            --cache-from=us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app:latest \
+            -t us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app:latest \
+            .
 
       - name: Push Docker image
         run: docker push us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app:latest
