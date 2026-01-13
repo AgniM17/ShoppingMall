@@ -24,4 +24,8 @@ RUN dotnet publish ShoppingDemo/ShoppingDemo.csproj -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
+
+# Tell ASP.NET to listen on port 8080
+ENV ASPNETCORE_URLS=http://+:8080
+
 ENTRYPOINT ["dotnet", "ShoppingDemo.dll"]
