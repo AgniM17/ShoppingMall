@@ -45,6 +45,10 @@ resource "google_cloud_run_service" "app" {
   name     = "shoppingdemo-app"
   location = var.region
 
+  depends_on = [
+    google_project_iam_member.artifact_access
+  ]
+
   template {
     spec {
       service_account_name = google_service_account.cloudrun_sa.email
