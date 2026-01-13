@@ -87,7 +87,9 @@ data "google_iam_policy" "noauth" {
 resource "google_cloud_run_v2_service_iam_member" "public" {
   location = google_cloud_run_v2_service.default.location
   project  = google_cloud_run_v2_service.default.project
-  service  = google_cloud_run_v2_service.default.name
   role     = "roles/run.invoker"
   member   = "allUsers"
+
+  # Full resource name of the service
+  name = google_cloud_run_v2_service.default.id
 }
