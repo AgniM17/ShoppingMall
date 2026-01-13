@@ -50,16 +50,38 @@ jobs:
 
       - name: Build & Push Docker image
         run: |
-          # Generate image tag (fallback to GITHUB_RUN_ID if manually triggered)
-          IMAGE_TAG=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app:${GITHUB_SHA:-${GITHUB_RUN_ID}}
-          echo "Building Docker image $IMAGE_TAG"
-          docker build -t $IMAGE_TAG .
+          IMAGE_BASE=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app
+          IMAGE_TAG=${IMAGE_BASE}:${GITHUB_SHA:-${GITHUB_RUN_ID}}
+          IMAGE_LATEST=${IMAGE_BASE}:latest
+
+          echo "Building Docker images $IMAGE_TAG and $IMAGE_LATEST"
+
+          docker build -t $IMAGE_TAG -t $IMAGE_LATEST .
+
           docker push $IMAGE_TAG
-          # Export TF_VAR_image to GitHub Actions environment for subsequent jobs
+          docker push $IMAGE_LATEST
+
           echo "TF_VAR_image=$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: Verify Docker image
         run: gcloud artifacts docker images list us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo
+
+
+      # - name: Configure Docker for GCP Artifact Registry
+      #   run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+
+      # - name: Build & Push Docker image
+      #   run: |
+      #     # Generate image tag (fallback to GITHUB_RUN_ID if manually triggered)
+      #     IMAGE_TAG=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app:${GITHUB_SHA:-${GITHUB_RUN_ID}}
+      #     echo "Building Docker image $IMAGE_TAG"
+      #     docker build -t $IMAGE_TAG .
+      #     docker push $IMAGE_TAG
+      #     # Export TF_VAR_image to GitHub Actions environment for subsequent jobs
+      #     echo "TF_VAR_image=$IMAGE_TAG" >> $GITHUB_ENV
+
+      # - name: Verify Docker image
+      #   run: gcloud artifacts docker images list us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo
 
   # apply:
   #   name: Terraform Apply
