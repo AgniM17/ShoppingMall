@@ -35,6 +35,8 @@ jobs:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
     needs: plan
+    outputs:
+      tf_var_image: ${{ steps.set_image.outputs.image_tag }}
 
     steps:
       - name: Checkout repo
@@ -49,6 +51,7 @@ jobs:
         run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
       - name: Build & Push Docker image
+        id: set_image
         run: |
           IMAGE_BASE=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app
           IMAGE_TAG=${IMAGE_BASE}:${GITHUB_SHA:-${GITHUB_RUN_ID}}
@@ -61,7 +64,7 @@ jobs:
           docker push $IMAGE_TAG
           docker push $IMAGE_LATEST
 
-          echo "TF_VAR_image=$IMAGE_TAG" >> $GITHUB_ENV
+          echo "TF_VAR_image=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Verify Docker image
         run: gcloud artifacts docker images list us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo
@@ -138,11 +141,13 @@ jobs:
 
       - name: Debug TF_VAR_image
         run: echo "TF_VAR_image=$TF_VAR_image"
+        env: 
+          TF_VAR_image: ${{ needs.build-and-push.outputs.tf_var_image }}
 
       - name: Terraform Apply
         working-directory: terraform
         env:
           TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_region: ${{ secrets.GCP_REGION }}
-          TF_VAR_image: ${{ env.TF_VAR_image }}
+          TF_VAR_image: ${{ needs.build-and-push.outputs.tf_var_image }}
         run: terraform apply -auto-approve
