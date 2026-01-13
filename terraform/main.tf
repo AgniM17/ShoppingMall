@@ -40,38 +40,51 @@ resource "google_project_iam_member" "artifact_access" {
   member = "serviceAccount:${google_service_account.cloudrun_sa.email}"
 }
 
-# Cloud Run Service
-resource "google_cloud_run_service" "app" {
-  name     = "shoppingdemo-app"
-  location = var.region
 
-  depends_on = [
-    google_project_iam_member.artifact_access
-  ]
+# This example uses the google_cloud_run_v2_service resource.
+resource "google_cloud_run_v2_service" "default" {
+  name     = "shoppingdemo-app" # The name of the service
+  location = "us-central1"           # The location (region) of the service
 
+  # Configuration for the service template (defines the deployed container)
   template {
-    spec {
-      service_account_name = google_service_account.cloudrun_sa.email
+    # The container configuration
+    containers {
+      image = var.image # The container image URL
+      ports {
+        container_port = 8080
+      }
 
-      containers {
-        image = var.image  # <-- use dynamic image from pipeline
-        ports {
-          container_port = 8080
+      # Optional: Define resource limits
+      resources {
+        cpu_idle = true # Allows CPU to be idled when not processing requests
+        limits = {
+          cpu    = "1"
+          memory = "512Mi"
         }
       }
     }
+    # Optional: Configure scaling parameters directly (v2 API approach)
+    scaling {
+      max_instance_count = 10 # Maximum number of container instances
+      min_instance_count = 0  # Minimum number of container instances
+    }
   }
 
-  traffic {
-    percent         = 100
-    latest_revision = true
+  # Makes the service publicly accessible (IAM setting handled separately for security best practice)
+  # For immediate public access, the 'allUsers' principal needs the 'roles/run.invoker' role.
+}
+
+# Granting public access to the service
+data "google_iam_policy" "noauth" {
+  binding {
+    role    = "roles/run.invoker"
+    members = ["allUsers"]
   }
 }
 
-# Public access
-resource "google_cloud_run_service_iam_member" "public" {
-  service  = google_cloud_run_service.app.name
-  location = google_cloud_run_service.app.location
-  role     = "roles/run.invoker"
-  member   = "allUsers"
+resource "google_cloud_run_service_iam_policy" "default" {
+  location    = google_cloud_run_v2_service.default.location
+  service     = google_cloud_run_v2_service.default.name
+  policy_data = data.google_iam_policy.noauth.policy_data
 }
