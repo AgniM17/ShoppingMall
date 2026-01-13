@@ -76,20 +76,11 @@ resource "google_cloud_run_v2_service" "default" {
   # For immediate public access, the 'allUsers' principal needs the 'roles/run.invoker' role.
 }
 
-# Granting public access to the service
-data "google_iam_policy" "noauth" {
-  binding {
-    role    = "roles/run.invoker"
-    members = ["allUsers"]
-  }
-}
-
 resource "google_cloud_run_v2_service_iam_member" "public" {
+  name     = google_cloud_run_v2_service.default.id
   location = google_cloud_run_v2_service.default.location
   project  = google_cloud_run_v2_service.default.project
-  role     = "roles/run.invoker"
-  member   = "allUsers"
 
-  # Full resource name of the service
-  name = google_cloud_run_v2_service.default.id
+  role   = "roles/run.invoker"
+  member = "allUsers"
 }
