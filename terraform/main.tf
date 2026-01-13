@@ -43,8 +43,9 @@ resource "google_project_iam_member" "artifact_access" {
 
 # This example uses the google_cloud_run_v2_service resource.
 resource "google_cloud_run_v2_service" "default" {
-  name     = "shoppingdemo-app" # The name of the service
+  name     = "shoppingdemo-app-v2" # The name of the service
   location = "us-central1"           # The location (region) of the service
+  ingress = "INGRESS_TRAFFIC_ALL"
 
   # Configuration for the service template (defines the deployed container)
   template {
