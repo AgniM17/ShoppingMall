@@ -64,7 +64,7 @@ jobs:
           docker push $IMAGE_TAG
           docker push $IMAGE_LATEST
 
-          echo "TF_VAR_image=$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Verify Docker image
         run: gcloud artifacts docker images list us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo
@@ -140,7 +140,7 @@ jobs:
         run: terraform init
 
       - name: Debug TF_VAR_image
-        run: echo "TF_VAR_image=$TF_VAR_image"
+        run: echo "TF_VAR_image=${{ needs.build-and-push.outputs.tf_var_image }}"
         env: 
           TF_VAR_image: ${{ needs.build-and-push.outputs.tf_var_image }}
 
