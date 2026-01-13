@@ -143,9 +143,7 @@ jobs:
         run: terraform init
 
       - name: Debug TF_VAR_image
-        run: echo "TF_VAR_image=${{ needs.build-and-push.outputs.tf_var_image }}"
-        env: 
-          TF_VAR_image: ${{ needs.build-and-push.outputs.tf_var_image }}
+        run: echo "TF_VAR_image = ${{ needs.build-and-push.outputs.tf_var_image }}"
 
       - name: Terraform Apply
         working-directory: terraform
