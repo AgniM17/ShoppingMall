@@ -145,10 +145,20 @@ jobs:
       - name: Debug TF_VAR_image
         run: echo "TF_VAR_image = ${{ needs.build-and-push.outputs.tf_var_image }}"
 
+      - name: Construct Docker image tag
+        run: |
+          IMAGE_BASE=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app
+          IMAGE_TAG=${IMAGE_BASE}:${GITHUB_SHA:-$GITHUB_RUN_ID}
+          echo "IMAGE_TAG=$IMAGE_TAG"
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+
+
       - name: Terraform Apply
         working-directory: terraform
         env:
           TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_region: ${{ secrets.GCP_REGION }}
-          TF_VAR_image: ${{ needs.build-and-push.outputs.tf_var_image }}
+          TF_VAR_image: $IMAGE_TAG
         run: terraform apply -auto-approve
