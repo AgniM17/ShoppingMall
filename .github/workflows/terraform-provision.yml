@@ -147,12 +147,7 @@ jobs:
 
       - name: Construct Docker image tag
         run: |
-          IMAGE_BASE=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app
-          IMAGE_TAG=${IMAGE_BASE}:${GITHUB_SHA:-$GITHUB_RUN_ID}
-          echo "IMAGE_TAG=$IMAGE_TAG"
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-          GITHUB_RUN_ID: ${{ github.run_id }}
+          echo "IMAGE_TAG=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app:${{ github.sha }}"
 
 
       - name: Terraform Apply
@@ -160,5 +155,5 @@ jobs:
         env:
           TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_region: ${{ secrets.GCP_REGION }}
-          TF_VAR_image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app:${GITHUB_SHA:-$GITHUB_RUN_ID}
+          TF_VAR_image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/aspnet-repo/app:${{ github.sha }}
         run: terraform apply -auto-approve
